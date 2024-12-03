@@ -4,7 +4,7 @@ steps:
     args:
       - "build"
       - "-t"
-      - "docker.io/mesames/cat-vton-pzc163:03-11-1519"
+      - "docker.io/mesames/cat-pzc163-runpod:v03121713"
       - "."
     env:
       - "DOCKER_BUILDKIT=1"
@@ -18,4 +18,4 @@ steps:
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "docker.io/mesames/cat-vton-pzc163:03-11-1519"
+      - "docker.io/mesames/cat-pzc163-runpod:v03121713"

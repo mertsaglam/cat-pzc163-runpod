@@ -1,10 +1,8 @@
 import runpod
-import os
 import base64
 import time
 import json
 import requests
-import string
 import random
 import io
 from PIL import Image
@@ -51,14 +49,14 @@ def poll_result(url, prompt_id):
         response = requests.request("GET",f"{url}/history")
         history = response.json()
         completed = prompt_id in history
-    result_image_name = history[prompt_id]["outputs"]["21"]["images"][0]["filename"]
+    result_image_name = history[prompt_id]["outputs"]["24"]["images"][0]["filename"]
 
     return result_image_name
 
 def handler(job):
     try:
         # Ensure required params
-        required_params = ["human_image_b64", "garment_image_b64", "sam_prompt", "sam_threshold", "idm_vton_garment_description", "idm_vton_negative_prompt", "width", "height", "num_inference_steps", "guidance_scale", "strength", "seed"]
+        required_params = ["human_image_b64", "garment_image_b64", "catvton_path", "cloth_type", "steps", "cfg", "seed", "mixed_precision", "sd15_inpaint_path"]
         for param in required_params:
             if param not in job['input']:
                 return {"status": 400, "message": f"Missing required parameter '{param}'"}
@@ -66,16 +64,13 @@ def handler(job):
         # Get params
         human_image_b64 = job['input']["human_image_b64"]
         garment_image_b64 = job['input']["garment_image_b64"]
-        sam_prompt = job['input']["sam_prompt"]
-        sam_threshold = float(job['input']["sam_threshold"])
-        idm_vton_garment_description = job['input']["idm_vton_garment_description"]
-        idm_vton_negative_prompt = job['input']["idm_vton_negative_prompt"]
-        width = int(job['input']["width"])
-        height = int(job['input']["height"])
-        num_inference_steps = int(job['input']["num_inference_steps"])
-        guidance_scale = float(job['input']["guidance_scale"])
-        strength = float(job['input']["strength"])
+        catvton_path = job['input']["catvton_path"]
+        cloth_type = job['input']["cloth_type"]
+        steps = int(job['input']["steps"])
+        cfg = float(job['input']["cfg"])
         seed = int(job['input']["seed"])
+        mixed_precision = job['input']["mixed_precision"]
+        sd15_inpaint_path = job['input']["sd15_inpaint_path"]
 
         # Save b64 images 
         human_image_name = f"human_{generate_random_seed()}.png" 
@@ -87,21 +82,17 @@ def handler(job):
             workflow = json.load(file)
             
         # Set workflow values
-        workflow["14"]["inputs"]["image"] = human_image_name
-        workflow["15"]["inputs"]["image"] = garment_image_name
+        workflow["10"]["inputs"]["image"] = human_image_name
+        workflow["11"]["inputs"]["image"] = garment_image_name
         
-        workflow["29"]["inputs"]["prompt"] = sam_prompt
-        workflow["29"]["inputs"]["threshold"] = sam_threshold
-        
-        workflow["35"]["inputs"]["garment_description"] = idm_vton_garment_description
-        workflow["35"]["inputs"]["negative_prompt"] = idm_vton_negative_prompt
-        workflow["35"]["inputs"]["seed"] = seed
-        workflow["35"]["inputs"]["width"] = width
-        workflow["35"]["inputs"]["height"] = height
-        workflow["35"]["inputs"]["num_inference_steps"] = num_inference_steps
-        workflow["35"]["inputs"]["guidance_scale"] = guidance_scale
-        workflow["35"]["inputs"]["strength"] = strength
-        
+        workflow["12"]["inputs"]["catvton_path"] = catvton_path
+        workflow["13"]["inputs"]["cloth_type"] = cloth_type        
+        workflow["16"]["inputs"]["seed"] = seed
+        workflow["16"]["inputs"]["steps"] = steps
+        workflow["16"]["inputs"]["cfg"] = cfg
+        workflow["17"]["inputs"]["mixed_precision"] = mixed_precision
+        workflow["17"]["inputs"]["sd15_inpaint_path"] = sd15_inpaint_path
+        workflow["17"]["inputs"]["catvton_path"] = catvton_path
         
         url = "http://127.0.0.1:8188"
         check_server(url)

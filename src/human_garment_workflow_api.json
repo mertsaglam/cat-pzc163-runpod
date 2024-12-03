@@ -1,147 +1,123 @@
 {
+  "10": {
+    "inputs": {
+      "image": "taylor-.jpg",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Target Person"
+    }
+  },
+  "11": {
+    "inputs": {
+      "image": "resource_demo_example_person_women_2-model_4.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Reference Garment"
+    }
+  },
   "12": {
     "inputs": {
-      "weight_dtype": "float16"
+      "catvton_path": "zhengchong/CatVTON"
     },
-    "class_type": "PipelineLoader",
+    "class_type": "LoadAutoMasker",
     "_meta": {
-      "title": "Load IDM-VTON Pipeline"
+      "title": "Load AutoMask Generator"
+    }
+  },
+  "13": {
+    "inputs": {
+      "cloth_type": "overall",
+      "pipe": [
+        "12",
+        0
+      ],
+      "target_image": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "AutoMasker",
+    "_meta": {
+      "title": "Auto Mask Generation"
     }
   },
   "14": {
     "inputs": {
-      "image": "musk.webp",
-      "upload": "image"
+      "images": [
+        "13",
+        1
+      ]
     },
-    "class_type": "LoadImage",
+    "class_type": "PreviewImage",
     "_meta": {
-      "title": "Load Human Image"
+      "title": "Masked Target"
     }
   },
   "15": {
     "inputs": {
-      "image": "shirt.webp",
-      "upload": "image"
+      "images": [
+        "13",
+        0
+      ]
     },
-    "class_type": "LoadImage",
+    "class_type": "PreviewImage",
     "_meta": {
-      "title": "Load Garment Image"
+      "title": "Binary Mask"
     }
   },
-  "21": {
+  "16": {
+    "inputs": {
+      "seed": 42,
+      "steps": 50,
+      "cfg": 2.5,
+      "pipe": [
+        "17",
+        0
+      ],
+      "target_image": [
+        "10",
+        0
+      ],
+      "refer_image": [
+        "11",
+        0
+      ],
+      "mask_image": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "CatVTON",
+    "_meta": {
+      "title": "TryOn by CatVTON"
+    }
+  },
+  "17": {
+    "inputs": {
+      "sd15_inpaint_path": "runwayml/stable-diffusion-inpainting",
+      "catvton_path": "zhengchong/CatVTON",
+      "mixed_precision": "bf16"
+    },
+    "class_type": "LoadCatVTONPipeline",
+    "_meta": {
+      "title": "Load CatVTON Pipeline"
+    }
+  },
+  "24": {
     "inputs": {
       "filename_prefix": "try_on",
       "images": [
-        "35",
+        "16",
         0
       ]
     },
     "class_type": "SaveImage",
     "_meta": {
       "title": "Save Image"
-    }
-  },
-  "27": {
-    "inputs": {
-      "model_name": "sam_hq_vit_h (2.57GB)"
-    },
-    "class_type": "SAMModelLoader (segment anything)",
-    "_meta": {
-      "title": "SAMModelLoader (segment anything)"
-    }
-  },
-  "28": {
-    "inputs": {
-      "model_name": "GroundingDINO_SwinB (938MB)"
-    },
-    "class_type": "GroundingDinoModelLoader (segment anything)",
-    "_meta": {
-      "title": "GroundingDinoModelLoader (segment anything)"
-    }
-  },
-  "29": {
-    "inputs": {
-      "prompt": "blazer",
-      "threshold": 0.3,
-      "sam_model": [
-        "27",
-        0
-      ],
-      "grounding_dino_model": [
-        "28",
-        0
-      ],
-      "image": [
-        "14",
-        0
-      ]
-    },
-    "class_type": "GroundingDinoSAMSegment (segment anything)",
-    "_meta": {
-      "title": "GroundingDinoSAMSegment (segment anything)"
-    }
-  },
-  "31": {
-    "inputs": {
-      "mask": [
-        "29",
-        1
-      ]
-    },
-    "class_type": "MaskToImage",
-    "_meta": {
-      "title": "Convert Mask to Image"
-    }
-  },
-  "33": {
-    "inputs": {
-      "model": "densepose_r50_fpn_dl.torchscript",
-      "cmap": "Parula (CivitAI)",
-      "resolution": 768,
-      "image": [
-        "14",
-        0
-      ]
-    },
-    "class_type": "DensePosePreprocessor",
-    "_meta": {
-      "title": "DensePose Estimator"
-    }
-  },
-  "35": {
-    "inputs": {
-      "garment_description": "a shirt",
-      "negative_prompt": "monochrome, lowres, bad anatomy, worst quality, low quality",
-      "width": 768,
-      "height": 1024,
-      "num_inference_steps": 30,
-      "guidance_scale": 2,
-      "strength": 1,
-      "seed": 42,
-      "pipeline": [
-        "12",
-        0
-      ],
-      "human_img": [
-        "14",
-        0
-      ],
-      "pose_img": [
-        "33",
-        0
-      ],
-      "mask_img": [
-        "31",
-        0
-      ],
-      "garment_img": [
-        "15",
-        0
-      ]
-    },
-    "class_type": "IDM-VTON",
-    "_meta": {
-      "title": "Run IDM-VTON Inference"
     }
   }
 }
