@@ -1,10 +1,8 @@
 import runpod
-import os
 import base64
 import time
 import json
 import requests
-import string
 import random
 import io
 from PIL import Image
@@ -58,7 +56,7 @@ def poll_result(url, prompt_id):
 def handler(job):
     try:
         # Ensure required params
-        required_params = ["human_image_b64", "garment_image_b64", "sam_prompt", "sam_threshold", "idm_vton_garment_description", "idm_vton_negative_prompt", "width", "height", "num_inference_steps", "guidance_scale", "strength", "seed"]
+        required_params = ["human_image_b64", "garment_image_b64", "catvton_path", "cloth_type", "steps", "cfg", "seed", "mixed_precision", "sd15_inpaint_path"]
         for param in required_params:
             if param not in job['input']:
                 return {"status": 400, "message": f"Missing required parameter '{param}'"}
@@ -69,10 +67,9 @@ def handler(job):
         catvton_path = job['input']["catvton_path"]
         cloth_type = job['input']["cloth_type"]
         steps = int(job['input']["steps"])
-        cfg = job['input']["cfg"]
+        cfg = float(job['input']["cfg"])
         seed = int(job['input']["seed"])
         mixed_precision = job['input']["mixed_precision"]
-        catvton_path = job['input']["catvton_path"]
         sd15_inpaint_path = job['input']["sd15_inpaint_path"]
 
         # Save b64 images 
@@ -96,7 +93,6 @@ def handler(job):
         workflow["17"]["inputs"]["mixed_precision"] = mixed_precision
         workflow["17"]["inputs"]["sd15_inpaint_path"] = sd15_inpaint_path
         workflow["17"]["inputs"]["catvton_path"] = catvton_path
-        
         
         url = "http://127.0.0.1:8188"
         check_server(url)
