@@ -1,0 +1,21 @@
+---
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "docker.io/mesames/cat-vton-pzc163:03-11-1519"
+      - "."
+    env:
+      - "DOCKER_BUILDKIT=1"
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "login"
+      - "-u"
+      - "$_DOCKER_USERNAME"
+      - "-p"
+      - "$_DOCKER_PASSWORD"
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "docker.io/mesames/cat-vton-pzc163:03-11-1519"

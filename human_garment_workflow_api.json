@@ -1,0 +1,123 @@
+{
+  "10": {
+    "inputs": {
+      "image": "taylor-.jpg",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Target Person"
+    }
+  },
+  "11": {
+    "inputs": {
+      "image": "resource_demo_example_person_women_2-model_4.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Reference Garment"
+    }
+  },
+  "12": {
+    "inputs": {
+      "catvton_path": "zhengchong/CatVTON"
+    },
+    "class_type": "LoadAutoMasker",
+    "_meta": {
+      "title": "Load AutoMask Generator"
+    }
+  },
+  "13": {
+    "inputs": {
+      "cloth_type": "overall",
+      "pipe": [
+        "12",
+        0
+      ],
+      "target_image": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "AutoMasker",
+    "_meta": {
+      "title": "Auto Mask Generation"
+    }
+  },
+  "14": {
+    "inputs": {
+      "images": [
+        "13",
+        1
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Masked Target"
+    }
+  },
+  "15": {
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Binary Mask"
+    }
+  },
+  "16": {
+    "inputs": {
+      "seed": 42,
+      "steps": 50,
+      "cfg": 2.5,
+      "pipe": [
+        "17",
+        0
+      ],
+      "target_image": [
+        "10",
+        0
+      ],
+      "refer_image": [
+        "11",
+        0
+      ],
+      "mask_image": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "CatVTON",
+    "_meta": {
+      "title": "TryOn by CatVTON"
+    }
+  },
+  "17": {
+    "inputs": {
+      "sd15_inpaint_path": "runwayml/stable-diffusion-inpainting",
+      "catvton_path": "zhengchong/CatVTON",
+      "mixed_precision": "bf16"
+    },
+    "class_type": "LoadCatVTONPipeline",
+    "_meta": {
+      "title": "Load CatVTON Pipeline"
+    }
+  },
+  "24": {
+    "inputs": {
+      "filename_prefix": "try_on",
+      "images": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  }
+}
